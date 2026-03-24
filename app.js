@@ -36,6 +36,7 @@ app.use('/', indexRouter);
 app.use('/students', usersRouter);
 app.use('/games', gamesRouter);
 app.use('/weapons', weaponRouter);
+app.use('/sloniki', slonikiRouter)
 app.use('/cars', carsRouter);
 app.use('/dhd', dhdRouter)
 app.use('/cats', catsRouter)
