@@ -17,6 +17,7 @@ import heroesRouter from './routes/heroes_mlbb.js'
 import catsRouter from './routes/cats.js' 
 import dhdRouter from './routes/dhd.js'
 import streetFoodRouter from './routes/street_food.js'
+import heroessRouter from './routes/heroes.js'
 import presidentRouter from './routes/president.js'
 import productRouter from './routes/product.js'
 
@@ -45,9 +46,10 @@ app.use('/weapons', weaponRouter);
 app.use('/sloniki', slonikiRouter);
 app.use('/cars', carsRouter);
 app.use('/heroes_mlbb', heroesRouter); 
-app.use('/gym2', gymRouter);
-app.use('/heroes', heroesRouter); 
 app.use('/cats', catsRouter); 
+app.use('/dhd', dhdRouter);
+app.use('/heroes', heroessRouter); 
+app.use('/gym2', gymRouter);
 app.use('/dhd', dhdRouter);
 app.use('/street_food', streetFoodRouter);
 app.use('/product', productRouter);
