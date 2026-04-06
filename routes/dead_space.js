@@ -24,24 +24,7 @@ router.post('/createGun', async function (req, res, next) {
   console.log("Submitted data: ", req.body);
 
   const { name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info } = req.body;
-
-  async function addGun(name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info) {
-    try {
-      const query = `
-      INSERT INTO deadSpace (
-            name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info
-        )
-        VALUES ($1, $2, $3, $4, $5) 
-        RETURNING *`;
-
-      const res = await db.query(query, [name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info]);
-
-
-    } catch (err) {
-      console.error(err)
-      throw err;
-    }
-  }
+  
       if (!name_of_gun) {
         return res.status(400).send("Назва зброї не може бути пустим рядком");
       } else if (!damage_type) {
@@ -59,6 +42,24 @@ router.post('/createGun', async function (req, res, next) {
       } else if (reload_seconds > 14) {
         return res.status(400).send("Час перезарядки не може бути більше 14");
       }
+  
+  async function addGun(name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info) {
+    try {
+      const query = `
+      INSERT INTO deadSpace (
+            name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info
+        )
+        VALUES ($1, $2, $3, $4, $5) 
+        RETURNING *`;
+
+      const res = await db.query(query, [name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info]);
+
+
+    } catch (err) {
+      console.error(err)
+      throw err;
+    }
+  }
 
   try {
     await addGun(name_of_gun, damage_type, damage_dealth, reload_seconds, additional_info);
