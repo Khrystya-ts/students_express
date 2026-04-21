@@ -126,3 +126,14 @@
     </div>
   </div>
 </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab') || 'create';
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const activePanel = document.querySelector(`.panel[data-tab="${tab}"]`);
+  const activeBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+  if (activePanel) activePanel.classList.add('active');
+  if (activeBtn) activeBtn.classList.add('active');
+</script>
