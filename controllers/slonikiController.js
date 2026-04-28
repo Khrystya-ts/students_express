@@ -1,6 +1,7 @@
 import db from '../db/connector.js';
 import bcrypt from 'bcrypt';
 import Slonik from '../models/Slonik.js';
+import { ValidationError, AuthError, NotFoundError } from '../errors/slonikErrors.js';
 
 const SALT_ROUNDS = 10;
 
@@ -31,20 +32,22 @@ export async function registerSlonik(data) {
 
 export async function deleteSlonik(username, password) {
   const res = await db.query('SELECT * FROM sloniki WHERE username = $1', [username]);
+  
   if (res.rows.length === 0) {
-    throw new Error('No slonik found');
+    // Помилка піде в errors.username
+    throw new NotFoundError('This slonik doesn`t exists', 'username');
   }
 
   const slonik = res.rows[0];
   const isMatch = await bcrypt.compare(password, slonik.password_hash);
   
-  if (isMatch) {
-    await db.query('DELETE FROM sloniki WHERE username = $1', [username]);
-    console.log(`✓ The slonik @${username} has been removed.`);
-    return true;
-  } else {
-    throw new Error('Invalid password');
+  if (!isMatch) {
+    // Помилка піде в errors.password
+    throw new AuthError('Error password', 'password');
   }
+
+  await db.query('DELETE FROM sloniki WHERE username = $1', [username]);
+  return true;
 }
 
 export async function updateSlonik(currentUsername, password, updateData) {
@@ -85,19 +88,21 @@ export async function updateSlonik(currentUsername, password, updateData) {
 }
 
 export function checkPassword(password) {
-const passwordInput = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/;
   if (password.length < 8) {
-    throw new Error('Password need to have 8 or more symbols')
-  } else if (!passwordInput.test(password)) {
-    throw new Error("The password must contain at least one uppercase letter, one lowercase letter, a number and a special character.");
+    throw new ValidationError('Password must be at least 8 characters long.', 'password');
+  }
+  if (!passwordRegex.test(password)) {
+    throw new ValidationError("Password is too weak (requires capital letter, number, and special character)", 'password');
   }
 }
 
 export function checkAge(age) {
   if (age < 0) {
-    const err = new Error("The age cannot be negative");
-    err.field = "age";
-    throw err;
+    throw new ValidationError("Age cannot be negative", "age");
+  }
+  if (age > 100) {
+    throw new ValidationError("Elephants don't live that long.", "age");
   }
 }
 

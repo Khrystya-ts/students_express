@@ -42,17 +42,25 @@ router.get('/delete', async function(req, res, next) {
 })
 
 router.post('/delete', async function(req, res, next) {
-const { username, password} = req.body;
-
-try {
+  const { username, password } = req.body;
+  
+  try {
     await deleteSlonik(username, password);
     res.redirect('/sloniki');
   } catch (err) {
-    if (err.message === 'Invalid password') {
-      res.status(403).send('Invalid password');
+    const errors = {};
+    
+    if (err.field) {
+      errors[err.field] = err.message;
     } else {
-      res.status(500).send(`!! Error deleting slonik: @${username}`);
+      errors.general = err.message;
     }
+
+    // Повертаємо на сторінку з об'єктом помилок та старими даними
+    res.render('forms/sloniki/deleteSloniki', { 
+      errors, 
+      username 
+    });
   }
 });
 
